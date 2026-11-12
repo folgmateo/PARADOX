@@ -1,0 +1,226 @@
+{
+  "browser": "Chrome/155.0.8059.79",
+  "bytes": 31290,
+  "http": {
+    "decoded": 31290,
+    "encoded": 31290,
+    "transfer": 31590,
+    "assets": []
+  },
+  "requests": [
+    "/"
+  ],
+  "offlineAfterLoad": true,
+  "touchEmulation": true,
+  "consoleErrors": [],
+  "checks": [
+    "First echo and exact positional recording",
+    "Dynamic gate collides with live player",
+    "Live and echo relay opens gates and scores",
+    "Two echoes charge core and collect combo repair",
+    "Visible sweep gap is safe",
+    "Live sweep causes damage",
+    "Shield bay removed in phase five",
+    "Solid echo damages player and breaks chain",
+    "Game over reason, stats and persisted record"
+  ],
+  "frameSample": {
+    "frames": 140,
+    "medianMs": 16.7,
+    "p95Ms": 16.8
+  },
+  "runs": [
+    {
+      "style": "idle",
+      "seconds": 11.23,
+      "score": 0,
+      "phase": 2,
+      "relays": 0,
+      "reason": "An echo crossed your trajectory."
+    },
+    {
+      "style": "perimeter",
+      "seconds": 44.53,
+      "score": 374,
+      "phase": 6,
+      "relays": 0,
+      "reason": "A rupture sweep breached your hull."
+    },
+    {
+      "style": "collector",
+      "seconds": 25.45,
+      "score": 7879,
+      "phase": 4,
+      "relays": 0,
+      "reason": "An echo crossed your trajectory."
+    },
+    {
+      "style": "relay planner",
+      "seconds": 75.9,
+      "score": 21808,
+      "phase": 10,
+      "relays": 8,
+      "reason": "A rupture sweep breached your hull."
+    },
+    {
+      "style": "evasive",
+      "seconds": 83.28,
+      "score": 14783,
+      "phase": 11,
+      "relays": 0,
+      "reason": "A rupture sweep breached your hull."
+    },
+    {
+      "style": "erratic",
+      "seconds": 36.63,
+      "score": 386,
+      "phase": 5,
+      "relays": 0,
+      "reason": "An echo crossed your trajectory."
+    },
+    {
+      "style": "idle",
+      "seconds": 11.23,
+      "score": 0,
+      "phase": 2,
+      "relays": 0,
+      "reason": "An echo crossed your trajectory."
+    },
+    {
+      "style": "perimeter",
+      "seconds": 46.18,
+      "score": 386,
+      "phase": 6,
+      "relays": 0,
+      "reason": "An echo crossed your trajectory."
+    },
+    {
+      "style": "collector",
+      "seconds": 24.33,
+      "score": 6735,
+      "phase": 4,
+      "relays": 0,
+      "reason": "An echo crossed your trajectory."
+    },
+    {
+      "style": "relay planner",
+      "seconds": 52.5,
+      "score": 18265,
+      "phase": 7,
+      "relays": 7,
+      "reason": "An echo crossed your trajectory."
+    },
+    {
+      "style": "evasive",
+      "seconds": 63.83,
+      "score": 9548,
+      "phase": 8,
+      "relays": 0,
+      "reason": "An echo crossed your trajectory."
+    },
+    {
+      "style": "erratic",
+      "seconds": 27.67,
+      "score": 202,
+      "phase": 4,
+      "relays": 0,
+      "reason": "A rupture sweep breached your hull."
+    },
+    {
+      "style": "idle",
+      "seconds": 11.23,
+      "score": 0,
+      "phase": 2,
+      "relays": 0,
+      "reason": "An echo crossed your trajectory."
+    },
+    {
+      "style": "perimeter",
+      "seconds": 36.82,
+      "score": 292,
+      "phase": 5,
+      "relays": 0,
+      "reason": "A rupture sweep breached your hull."
+    },
+    {
+      "style": "collector",
+      "seconds": 17.32,
+      "score": 4420,
+      "phase": 3,
+      "relays": 0,
+      "reason": "An echo crossed your trajectory."
+    },
+    {
+      "style": "relay planner",
+      "seconds": 79.43,
+      "score": 15865,
+      "phase": 10,
+      "relays": 5,
+      "reason": "An echo crossed your trajectory."
+    },
+    {
+      "style": "evasive",
+      "seconds": 90,
+      "score": 14321,
+      "phase": 12,
+      "relays": 0,
+      "reason": "90 s cap"
+    },
+    {
+      "style": "erratic",
+      "seconds": 34.2,
+      "score": 390,
+      "phase": 5,
+      "relays": 0,
+      "reason": "An echo crossed your trajectory."
+    },
+    {
+      "style": "idle",
+      "seconds": 11.23,
+      "score": 0,
+      "phase": 2,
+      "relays": 0,
+      "reason": "An echo crossed your trajectory."
+    },
+    {
+      "style": "perimeter",
+      "seconds": 44.68,
+      "score": 374,
+      "phase": 6,
+      "relays": 0,
+      "reason": "An echo crossed your trajectory."
+    },
+    {
+      "style": "collector",
+      "seconds": 25.12,
+      "score": 7404,
+      "phase": 4,
+      "relays": 0,
+      "reason": "An echo crossed your trajectory."
+    },
+    {
+      "style": "relay planner",
+      "seconds": 27.95,
+      "score": 5951,
+      "phase": 4,
+      "relays": 2,
+      "reason": "A rupture sweep breached your hull."
+    },
+    {
+      "style": "evasive",
+      "seconds": 90,
+      "score": 12436,
+      "phase": 12,
+      "relays": 1,
+      "reason": "90 s cap"
+    },
+    {
+      "style": "erratic",
+      "seconds": 47.43,
+      "score": 534,
+      "phase": 6,
+      "relays": 1,
+      "reason": "An echo crossed your trajectory."
+    }
+  ]
+}
