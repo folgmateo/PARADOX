@@ -1,0 +1,13 @@
+{
+  "version": "cinema-v2",
+  "width": 720,
+  "height": 1280,
+  "fps": 60,
+  "duration": 30,
+  "bytes": 9311952,
+  "videoCodec": "h264",
+  "audioCodec": "aac",
+  "sourceSha256": "9db08907187a2442630d4360bd60c73b31f473a7a424ef70aefd3dbd53c8eac4",
+  "browserErrors": [],
+  "createdAt": "2026-11-16T23:26:26.170Z"
+}
