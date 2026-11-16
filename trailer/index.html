@@ -2,7 +2,7 @@
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080912"><meta property="og:image" content="https://folgmateo.github.io/PARADOX/trailer/preview.jpg"><meta property="og:title" content="PARADOX — Tráiler"><meta property="og:description" content="Cada 8 segundos, tu pasado vuelve."><title>PARADOX — Tráiler</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#080912;color:#f5f4ff;font:15px system-ui,sans-serif;display:grid;place-items:center;min-height:100svh;padding:16px}main{width:min(100%,440px);display:grid;gap:10px}#film,#finished{display:block;width:min(100%,calc((100svh - 123px)*.5625));min-width:min(100%,215px);height:auto;justify-self:center;aspect-ratio:9/16;background:#0b0a19;border:1px solid #28243e}#film:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid #62f7ec;outline-offset:3px}.controls{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}button,a{font:inherit;color:inherit;background:#151327;border:1px solid #35304f;border-radius:4px;padding:8px 12px;text-decoration:none;cursor:pointer}button:disabled{opacity:.45}a{color:#061715;background:#62f7ec;border-color:#62f7ec}output{min-height:1.2em;color:#bcb7d2;text-align:center;font-size:12px}#fixture{display:none}[hidden]{display:none!important}.kicker{margin:0;text-align:center;font:10px monospace;letter-spacing:3px;color:#89c8c3;padding:4px 0}#finished{max-height:calc(100svh - 154px);object-fit:contain}#film{max-height:calc(100svh - 154px);object-fit:contain}button{transition:background .2s}button:hover{background:#29213e}#watch{border-color:#62f7ec70}
-</style></head><body><main><p class="kicker">PARADOX / GAMEPLAY TRAILER</p><video id="finished" hidden controls playsinline preload="metadata" poster="preview.jpg?v=3" aria-label="Tráiler cinematográfico de PARADOX"></video>
+</style></head><body><main><p class="kicker">PARADOX / GAMEPLAY TRAILER</p><video id="finished" hidden controls playsinline preload="metadata" poster="preview.jpg?v=3.1" aria-label="Tráiler cinematográfico de PARADOX"></video>
 <canvas id="film" tabindex="0" width="720" height="1280" aria-label="Tráiler de PARADOX. Pulsa reproducir para verlo con sonido."></canvas>
 <div class="controls"><button id="watch">Reproducir</button><button id="export">Guardar video</button><a href="../">Jugar PARADOX</a></div>
 <output id="status" aria-live="polite"></output></main>
@@ -793,9 +793,10 @@ function closeView(shot,t,u){
   const marker=(x,y,label,color)=>{
    const xx=360+(x-cx)*z,yy=460+(y-cy)*z;
    if(xx<45||xx>675||yy<50||yy>850)return;
-   ac.font='700 18px monospace';ac.textAlign='center';ac.fillStyle=color;
-   ac.fillText(label,xx,yy-43);ac.strokeStyle=color;ac.lineWidth=1;
-   ac.beginPath();ac.moveTo(xx,yy-35);ac.lineTo(xx,yy-22);ac.stroke();
+   const side=label==='TÚ'?-1:1,tx=clamp(xx+side*28,38,682),ty=yy+58;
+   ac.font='700 18px monospace';ac.textAlign='center';ac.fillStyle='#050710d9';
+   ac.fillRect(tx-28,ty-19,56,25);ac.fillStyle=color;ac.fillText(label==='TÚ'?'TÚ':'ECO',tx,ty);
+   ac.strokeStyle=color;ac.lineWidth=1;ac.beginPath();ac.moveTo(xx,yy+19);ac.lineTo(tx,ty-26);ac.stroke();
   };
   marker(run.player.x,run.player.y,'TÚ',acid);
   run.echoes.forEach((e,i)=>{const at=clamp(run.frame-1,0,479)*2;marker(e.path[at],e.path[at+1],i?'ECO':'TU PASADO',pink)});
@@ -994,7 +995,7 @@ async function playFilm(record=false){
 }
 $('watch').onclick=()=>playFilm().catch(()=>emitStatus('Pulsa de nuevo para reproducir.'));
 $('export').onclick=()=>{
- if(readyMp4){const a=document.createElement('a');a.href='PARADOX-cinematic.mp4?v=3';a.download='PARADOX-gameplay.mp4';a.click()}
+ if(readyMp4){const a=document.createElement('a');a.href='PARADOX-cinematic.mp4?v=3.1';a.download='PARADOX-gameplay.mp4';a.click()}
  else if(window.MediaRecorder&&film.captureStream)playFilm(true).catch(()=>emitStatus('La descarga MP4 estará disponible en breve.'));
  else emitStatus('La descarga MP4 estará disponible en breve.');
 };
@@ -1005,7 +1006,7 @@ canvas.style.width='960px';canvas.style.height='600px';
 canvas.getBoundingClientRect=()=>({width:960,height:600,left:0,top:0});
 prefs.mute=true;resize();setup();renderFrame(28.8);
 window.PARADOX_TRAILER={
- version:'action-v3',duration:D,fps:60,render:renderFrame,
+ version:'action-v3.1',duration:D,fps:60,render:renderFrame,
  reset(){stopFilm();setup();lastChapter=-1},
  snapshot(){return {score:run.score,combo:Math.min(5,run.combo),hull:run.hull,echoes:run.echoes.length,near:run.near,relays:run.relays,tick:run.tick,chapter:lastChapter}},
  async audio(){
@@ -1017,8 +1018,8 @@ window.PARADOX_TRAILER={
 };
 if(!new URLSearchParams(location.search).has('render')){
  fetch('render-manifest.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(m=>{
-  if(m?.version!=='action-v3')return;
-  readyMp4=true;$('finished').src='PARADOX-cinematic.mp4?v=3';$('finished').hidden=false;film.hidden=true;
+  if(m?.version!=='action-v3.1')return;
+  readyMp4=true;$('finished').src='PARADOX-cinematic.mp4?v=3.1';$('finished').hidden=false;film.hidden=true;
   $('export').textContent='Descargar MP4';emitStatus('30 s · 9:16 · 60 fps · Sonido original');
  }).catch(()=>{});
 }
