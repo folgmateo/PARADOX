@@ -1,0 +1,50 @@
+name: Render cinematic trailer
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'trailer/index.html'
+      - 'trailer/render.mjs'
+      - '.github/workflows/render-trailer.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: paradox-cinematic-render
+  cancel-in-progress: true
+jobs:
+  render:
+    if: "!contains(github.event.head_commit.message, '[skip trailer]')"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install renderer
+        run: |
+          npm install --prefix /tmp/paradox-render playwright@1.51.1
+          /tmp/paradox-render/node_modules/.bin/playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Render and validate
+        run: node trailer/render.mjs
+      - name: Preserve video artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PARADOX-cinematic-MP4
+          path: |
+            trailer/PARADOX-cinematic.mp4
+            trailer/preview.jpg
+            trailer/preview-sheet.jpg
+            trailer/render-manifest.json
+      - name: Publish rendered video
+        run: |
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$GITHUB_SHA"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add trailer/PARADOX-cinematic.mp4 trailer/preview.jpg trailer/preview-sheet.jpg trailer/render-manifest.json
+          git commit -m "Publish rendered PARADOX cinematic video [skip trailer]"
+          git push origin HEAD:main

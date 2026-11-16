@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080912"><meta property="og:title" content="PARADOX — Tráiler"><meta property="og:description" content="Cada 8 segundos, tu pasado vuelve."><title>PARADOX — Tráiler</title>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080912"><meta property="og:image" content="https://folgmateo.github.io/PARADOX/trailer/preview.jpg"><meta property="og:title" content="PARADOX — Tráiler"><meta property="og:description" content="Cada 8 segundos, tu pasado vuelve."><title>PARADOX — Tráiler</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#080912;color:#f5f4ff;font:15px system-ui,sans-serif;display:grid;place-items:center;min-height:100svh;padding:12px}main{width:min(100%,440px);display:grid;gap:10px}#film{display:block;width:min(100%,calc((100svh - 123px)*.5625));min-width:min(100%,215px);height:auto;justify-self:center;aspect-ratio:9/16;background:#0b0a19;border:1px solid #28243e}#film:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid #62f7ec;outline-offset:3px}.controls{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}button,a{font:inherit;color:inherit;background:#151327;border:1px solid #35304f;border-radius:4px;padding:8px 12px;text-decoration:none;cursor:pointer}button:disabled{opacity:.45}a{color:#061715;background:#62f7ec;border-color:#62f7ec}output{min-height:1.2em;color:#bcb7d2;text-align:center;font-size:12px}#fixture{display:none}
-</style></head><body><main>
+*{box-sizing:border-box}body{margin:0;background:#080912;color:#f5f4ff;font:15px system-ui,sans-serif;display:grid;place-items:center;min-height:100svh;padding:16px}main{width:min(100%,440px);display:grid;gap:10px}#film,#finished{display:block;width:min(100%,calc((100svh - 123px)*.5625));min-width:min(100%,215px);height:auto;justify-self:center;aspect-ratio:9/16;background:#0b0a19;border:1px solid #28243e}#film:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid #62f7ec;outline-offset:3px}.controls{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}button,a{font:inherit;color:inherit;background:#151327;border:1px solid #35304f;border-radius:4px;padding:8px 12px;text-decoration:none;cursor:pointer}button:disabled{opacity:.45}a{color:#061715;background:#62f7ec;border-color:#62f7ec}output{min-height:1.2em;color:#bcb7d2;text-align:center;font-size:12px}#fixture{display:none}[hidden]{display:none!important}.kicker{margin:0;text-align:center;font:10px monospace;letter-spacing:3px;color:#89c8c3;padding:4px 0}#finished{max-height:calc(100svh - 154px);object-fit:contain}#film{max-height:calc(100svh - 154px);object-fit:contain}button{transition:background .2s}button:hover{background:#29213e}#watch{border-color:#62f7ec70}
+</style></head><body><main><p class="kicker">PARADOX / CINEMATIC TRAILER</p><video id="finished" hidden controls playsinline preload="metadata" poster="preview.jpg" aria-label="Tráiler cinematográfico de PARADOX"></video>
 <canvas id="film" tabindex="0" width="720" height="1280" aria-label="Tráiler de PARADOX. Pulsa reproducir para verlo con sonido."></canvas>
-<div class="controls"><button id="watch">Reproducir</button><button id="export">Exportar video</button><a href="../">Jugar PARADOX</a></div>
+<div class="controls"><button id="watch">Reproducir</button><button id="export">Guardar video</button><a href="../">Jugar PARADOX</a></div>
 <output id="status" aria-live="polite"></output></main>
 <div id="fixture" aria-hidden="true">
 <header><span class="brand"><i aria-hidden="true"></i> PARADOX <span class="tag">/ TEMPORAL ARCADE</span></span><div class="actions"><button id="sound" type="button" aria-pressed="false">SOUND ON</button><button id="pause" type="button" disabled>PAUSE</button></div></header>
@@ -646,208 +646,394 @@ function pilot(){
  if(y<p.y-7)keys.add('w');if(y>p.y+7)keys.add('s');
  step();
 }
-const film=$('film'), f=film.getContext('2d',{alpha:false}), FW=720,FH=1280, D=25.6;
-const acid='#62f7ec', pink='#ff70cf', ink='#f1efff', milk='#b8bad8';
-const phrases=[
- [0,3.2,'TU PASADO','TE PERSIGUE',''],
- [3.2,8.1,'CADA 8 SEGUNDOS','NACE UN ECO','Repite tu recorrido exacto'],
- [8.1,13.1,'USA TUS ECOS','A TU FAVOR','Activa relés y encadena combos'],
- [13.1,19.0,'ESQUIVA','EL BARRIDO','Encuentra el hueco antes de que llegue'],
- [19.0,D,'PARADOX','','Juega en tu navegador']
-];
-const cuts=[[0,2.0,0],[3.2,6.9,1],[8.1,12.1,1],[13.1,16.1,1.32],[19,0,0]];
+
+const film=$('film'), f=film.getContext('2d',{alpha:false});
+const FW=720,FH=1280,BPM=128,BEAT=60/BPM,D=BEAT*64;
+const acid='#62f7ec', pink='#ff70cf', ink='#f4f2ff', dim='#a9a3c2';
 const morse='-.. .- -. .. . .-.. .- / .- --. ..- .. .-.. .- .-. / - . / .- -- --- .-.-.';
-const emitStatus=(value)=>{$('status').textContent=value};
-const ease=(x)=>1-(1-clamp(x,0,1))**3;
-let stageIndex=-1,simTime=0,started=0,raf=0,active=false,recording=null, soundtrack=null, destination=null, motionSeed=311;
-const backdropSeed=Array.from({length:95},(_,i)=>[i*173.723%FW,i*i*57.13%FH,i%4]);
-let lastDownload;
+const ease=x=>{x=clamp(x,0,1);return 1-(1-x)**3};
+const smooth=x=>{x=clamp(x,0,1);return x*x*(3-2*x)};
+const mix=(a,b,t)=>a+(b-a)*t;
+let motionSeed=311,simTime=0,simFrame=-1,lastChapter=-1;
 function seeded(){motionSeed=(Math.imul(motionSeed,1664525)+1013904223)>>>0;return motionSeed/4294967296}
 function setup(){
- const old=Math.random;Math.random=seeded;
- try{
-  makeRun(25);state='PLAYING';keys.clear();waypoint=0;known=0;motionSeed=311;simTime=0;
- }finally{Math.random=old}
+ const old=Math.random;Math.random=seeded;motionSeed=311;
+ try{makeRun(25);state='PLAYING';keys.clear();waypoint=0;known=0;simTime=0;simFrame=-1}finally{Math.random=old}
 }
 function captureArena(target){
+ const frame=Math.floor(target*60);
+ if(frame===simFrame)return;
  if(target<simTime)setup();
  const old=Math.random;Math.random=seeded;
- try {while(run.tick<Math.floor(target*60)&&state==='PLAYING')pilot()}finally{Math.random=old}
- simTime=target;
- draw(target*1000);
+ try{while(run.tick<frame&&state==='PLAYING')pilot()}finally{Math.random=old}
+ simTime=target;simFrame=frame;draw(target*1000);
 }
-function textAt(t,x,y,size,color=ink,weight=900){
- f.fillStyle=color;f.font=weight+' '+size+'px system-ui,sans-serif';f.textAlign='center';f.fillText(t,x,y);
+function type(txt,x,y,size=64,color=ink,weight=800,align='center',spacing=0){
+ f.fillStyle=color;f.font=weight+' '+size+'px system-ui,sans-serif';f.textAlign=align;
+ if('letterSpacing' in f)f.letterSpacing=spacing+'px';
+ f.fillText(txt,x,y);
+ if('letterSpacing' in f)f.letterSpacing='0px';
 }
-function mono(t,x,y,size,color=milk,align='center'){
- f.fillStyle=color;f.font='700 '+size+'px monospace';f.textAlign=align;f.fillText(t,x,y);
+function small(txt,x,y,color=dim,align='center',size=16){
+ f.font='500 '+size+'px monospace';f.textAlign=align;f.fillStyle=color;f.fillText(txt,x,y);
 }
-function segment(x,y,u,v,color,width=1){
- f.strokeStyle=color;f.lineWidth=width;f.beginPath();f.moveTo(x,y);f.lineTo(u,v);f.stroke();
+function path(points,fill,stroke,width=1){
+ f.beginPath();points.forEach((p,i)=>i?f.lineTo(p[0],p[1]):f.moveTo(p[0],p[1]));f.closePath();
+ if(fill){f.fillStyle=fill;f.fill()}
+ if(stroke){f.strokeStyle=stroke;f.lineWidth=width;f.stroke()}
 }
-function poly(x,y,r,color,filled=false){
- f.beginPath();f.moveTo(x,y-r);f.lineTo(x+r*.84,y);f.lineTo(x,y+r);f.lineTo(x-r*.84,y);f.closePath();
- if(filled){f.fillStyle=color;f.fill()}else{f.strokeStyle=color;f.lineWidth=2;f.stroke()}
+function line2(x,y,x2,y2,color,width=1){
+ f.beginPath();f.moveTo(x,y);f.lineTo(x2,y2);f.strokeStyle=color;f.lineWidth=width;f.stroke();
 }
-function field(t){
- const bg=f.createRadialGradient(375,600,15,375,600,710);
- bg.addColorStop(0,'#211535');bg.addColorStop(.57,'#100e22');bg.addColorStop(1,'#050710');
- f.fillStyle=bg;f.fillRect(0,0,FW,FH);
- for(const [x,y,k] of backdropSeed){
-  f.fillStyle=k===0?'#8f5f9c':'#36344e';
-  f.globalAlpha=.33+.19*Math.sin(x*.01+t);f.fillRect(x,(y+t*(5+k*3))%FH,k===0?2:1,2);
+function rotate3(point,ax,ay,az){
+ let [x,y,z]=point;
+ let yy=y*Math.cos(ax)-z*Math.sin(ax);z=y*Math.sin(ax)+z*Math.cos(ax);y=yy;
+ let xx=x*Math.cos(ay)+z*Math.sin(ay);z=-x*Math.sin(ay)+z*Math.cos(ay);x=xx;
+ xx=x*Math.cos(az)-y*Math.sin(az);y=x*Math.sin(az)+y*Math.cos(az);x=xx;
+ return [x,y,z];
+}
+function project(p,cx=360,cy=620,distance=900){
+ const scale=900/(distance+p[2]);return [cx+p[0]*scale,cy+p[1]*scale,scale];
+}
+const starPositions=Array.from({length:110},(_,i)=>[((i*197.391)%1400)-700,((i*i*17.45)%1600)-800,(i*89.671)%1500]);
+function atmosphere(t,intense=0){
+ const g=f.createRadialGradient(390,600,10,390,600,840);
+ g.addColorStop(0,'#1d102d');g.addColorStop(.52,'#0d0d1d');g.addColorStop(1,'#03060c');
+ f.fillStyle=g;f.fillRect(0,0,FW,FH);
+ for(let i=0;i<starPositions.length;i++){
+  const [x,y,z0]=starPositions[i],z=80+((z0-t*(70+intense*250))%1500+1500)%1500;
+  const p=project([x,y,z],360,600,250), q=project([x,y,z+12+intense*35],360,600,250);
+  f.globalAlpha=clamp(1-z/1900,.1,.8);
+  line2(p[0],p[1],q[0],q[1],i%5===0?'#bf70bb':'#80b5c7',i%3===0?1.6:.8);
  }
  f.globalAlpha=1;
- for(let x=36;x<FW;x+=54)segment(x,64,x,FH-70,'#53466b25');
- for(let y=64;y<FH;y+=54)segment(36,y,684,y,'#53466b25');
- segment(36,78,684,78,'#77739475');
- segment(36,1203,684,1203,'#77739475');
+ const glow=f.createRadialGradient(50+Math.sin(t*.3)*70,650,5,60,650,500);
+ glow.addColorStop(0,'#57123c35');glow.addColorStop(1,'#57123c00');
+ f.fillStyle=glow;f.fillRect(0,180,720,980);
 }
-function mark(t,y){
- const a=t*.55;
- for(let i=0;i<5;i++){
-  const r=134+i*21;
-  f.lineWidth=i===0?2:1;
-  f.strokeStyle=i%2?'#eb6bc374':'#66f5e47a';
-  f.beginPath();f.arc(360,y,r,a*(i%2?-1:1)+i*.64,a*(i%2?-1:1)+i*.64+Math.PI*(1.25+i*.1));f.stroke();
+const vertices=[[0,-170,0],[130,0,0],[0,170,0],[-130,0,0],[0,0,100],[0,0,-100]];
+const faces=[[0,1,4],[1,2,4],[2,3,4],[3,0,4],[0,5,1],[1,5,2],[2,5,3],[3,5,0]];
+function crystal(t,x=360,y=590,size=1,alpha=1,phase=0){
+ const ax=.19+Math.sin(t*.32)*.22,ay=t*.58+phase,az=-.12+Math.sin(t*.24)*.18;
+ const ps=vertices.map(v=>rotate3(v.map(k=>k*size),ax,ay,az));
+ const fs=faces.map((ids,i)=>({ids,i,z:ids.reduce((s,j)=>s+ps[j][2],0)})).sort((a,b)=>b.z-a.z);
+ f.save();f.globalAlpha=alpha;
+ for(const face of fs){
+  const pts=face.ids.map(i=>project(ps[i],x,y,850));
+  const cyan=face.i%4<2;
+  const g=f.createLinearGradient(pts[0][0],pts[0][1],pts[2][0]+1,pts[2][1]+1);
+  g.addColorStop(0,cyan?'#c8fff2':'#ffd9f2');g.addColorStop(.16,cyan?'#55eadf':'#ff69c7');
+  g.addColorStop(.8,cyan?'#075368':'#6a155a');g.addColorStop(1,'#100d29');
+  path(pts,g,cyan?'#9effef80':'#ffb5e080',.9);
  }
- for(let i=5;i>=0;i--){
-  const r=107-i*10,w=t*.7-i*.35;
-  f.save();f.translate(360-i*19,y+i*14);f.rotate(w*.36);
-  f.globalAlpha=1-i*.137;
-  f.shadowColor=i?pink:acid;f.shadowBlur=i?13:30;
-  poly(0,0,r,i?pink:acid);f.restore();
- }
- poly(360,y,4,ink,true);
+ f.restore();
 }
-function frame(t){
- const i=phrases.findIndex(p=>t<p[1]);const index=i<0?4:i;
- const [from,to,top,bottom,caption]=phrases[index];
- const u=t-from, beat=ease(u/.43), leave=1-ease((u-(to-from-.28))/.28);
- const opacity=Math.max(0,Math.min(1,beat,index===4?1:leave));
- f.setTransform(1,0,0,1,0,0);f.globalAlpha=1;field(t);
- mono('PARADOX',36,61,20,acid,'left');
- const timer=(Math.floor(t*100)/100).toFixed(2).padStart(5,'0').replace('.',':');
- mono(timer,684,61,18,milk,'right');
- if(index===0){
-  mark(t,664);
-  f.save();f.globalAlpha=opacity;f.translate(0,(1-beat)*27);
-  textAt(top,360,327,72);
-  textAt(bottom,360,414,92,acid,950);
-  f.restore();
- }else if(index<4){
-  if(stageIndex!==index){stageIndex=index;setup()}
-  captureArena(cuts[index][1]+u*cuts[index][2]);
-  f.save();f.globalAlpha=opacity;f.translate(0,(1-beat)*19);
-  const emphasis=index===2?pink:acid;
-  textAt(top,360,222,index===1?51:61);
-  textAt(bottom,360,292,index===2?78:72,emphasis,950);
-  const x=34,y=388,w=652,h=408;
-  f.fillStyle='#05050e';f.fillRect(x-5,y-5,w+10,h+10);
-  f.shadowColor=emphasis;f.shadowBlur=21;f.strokeStyle=emphasis;f.lineWidth=1.5;f.strokeRect(x-1,y-1,w+2,h+2);f.shadowBlur=0;
-  f.drawImage(canvas,x,y,w,h);
-  mono('FASE '+format(run.lap+1),x,366,19,emphasis,'left');
-  mono('ECOS '+run.echoes.length,x+w,366,19,milk,'right');
-  mono('PUNTOS '+padded(run.score),x,839,18,milk,'left');
-  mono('CASCO '+'I'.repeat(run.hull),x+w,839,18,milk,'right');
-  textAt(caption,360,977,27,ink,650);
-  f.restore();
- }else{
-  mark(t,475);
-  f.save();f.globalAlpha=opacity;f.translate(0,(1-beat)*24);
-  textAt(top,360,775,112,ink,950);
-  textAt(caption,360,847,32,acid,680);
-  mono('folgmateo.github.io/PARADOX/',360,936,23,ink);
-  mono(morse,360,1115,12,'#94dfde');
-  f.restore();
+function tunnel(t,cx=360,cy=610,power=1){
+ f.save();
+ const speed=t*(210+power*110);
+ for(let j=11;j>=0;j--){
+  const z=80+((j*180-speed)%2160+2160)%2160;
+  const twist=.24*Math.sin(t*.3)+.00023*z, r=330;
+  const points=[[0,-r,0],[r,0,0],[0,r,0],[-r,0,0]].map(p=>project(rotate3([p[0],p[1],z],0,0,twist),cx,cy,160));
+  f.globalAlpha=Math.min(.75,(1-z/2600)*.8);
+  const color=j%3?acid:pink;
+  path(points,null,color,j%3?1:2);
  }
- f.fillStyle=acid;f.fillRect(36,1202,648*Math.min(1,t/D),3);
+ f.restore();
 }
-function music(){
- const C=window.AudioContext||window.webkitAudioContext;
- if(!C)return null;
- if(!soundtrack)soundtrack=new C();
- if(!destination) destination=soundtrack.createMediaStreamDestination();
- const c=soundtrack;const bus=c.createGain();
- bus.gain.value=.54;bus.connect(c.destination);bus.connect(destination);
- const offset=c.currentTime+.055;
- const length=Math.floor(D/.31), scale=[55,55,65.41,55,73.42,65.41,49,49];
- function note(hz,end,when,length,volume,type='sine'){
-  const a=c.createOscillator(), g=c.createGain();
-  const time=offset+when;
-  a.type=type;a.frequency.setValueAtTime(hz,time);a.frequency.exponentialRampToValueAtTime(end,time+length);
-  g.gain.setValueAtTime(.0001,time);g.gain.exponentialRampToValueAtTime(volume,time+.013);
-  g.gain.exponentialRampToValueAtTime(.0001,time+length);
-  a.connect(g);g.connect(bus);a.start(time);a.stop(time+length+.005);a.onended=()=>{a.disconnect();g.disconnect()};
+function triangle(image,s,d){
+ const [a,b,c]=s, [p,q,r]=d;
+ const den=a[0]*(b[1]-c[1])+b[0]*(c[1]-a[1])+c[0]*(a[1]-b[1]);
+ if(Math.abs(den)<.00001)return;
+ const coeff=(component)=>[
+ (p[component]*(b[1]-c[1])+q[component]*(c[1]-a[1])+r[component]*(a[1]-b[1]))/den,
+ (p[component]*(c[0]-b[0])+q[component]*(a[0]-c[0])+r[component]*(b[0]-a[0]))/den,
+ (p[component]*(b[0]*c[1]-c[0]*b[1])+q[component]*(c[0]*a[1]-a[0]*c[1])+r[component]*(a[0]*b[1]-b[0]*a[1]))/den
+ ];
+ const xx=coeff(0),yy=coeff(1),cx=(p[0]+q[0]+r[0])/3,cy=(p[1]+q[1]+r[1])/3;
+ f.save();f.beginPath();
+ [p,q,r].forEach((v,i)=>{const x=cx+(v[0]-cx)*1.004,y=cy+(v[1]-cy)*1.004;i?f.lineTo(x,y):f.moveTo(x,y)});
+ f.closePath();f.clip();f.transform(xx[0],yy[0],xx[1],yy[1],xx[2],yy[2]);f.drawImage(image,0,0);f.restore();
+}
+function stagePoint(u,v,pose,depth=0){
+ const p=rotate3([(u-.5)*pose.w,(v-.5)*pose.w*.625,depth],pose.rx,pose.ry,pose.rz);
+ return project(p,360,pose.cy,pose.distance);
+}
+function arenaPanel(t,chapter,u){
+ const enter=smooth(u/.65), close=smooth((u-2.95)/.8);
+ const pose={w:612,cy:674+Math.sin(t*.7)*15,distance:930+close*42-30*enter,
+  rx:mix(.65,.12,enter)+Math.sin(t*.38)*.075,ry:mix(-.38,.19,enter)+Math.sin(t*.6)*.13,
+  rz:mix(-.09,.035,enter)};
+ if(chapter===4){pose.rx=.08+Math.sin(u*.6)*.12;pose.ry=-.16+u*.035;pose.w=636;}
+ const corners=[[0,0],[1,0],[1,1],[0,1]];
+ const top=corners.map(p=>stagePoint(...p,pose)),under=corners.map(p=>stagePoint(...p,pose,20));
+ path(under,'#0b1420',acid);
+ for(let i=0;i<4;i++)path([top[i],top[(i+1)%4],under[(i+1)%4],under[i]],i%2?'#152235':'#252039','#97c7df30');
+ path(top,'#090a18');
+ const nx=8,ny=5,verts=[];
+ for(let y=0;y<=ny;y++)for(let x=0;x<=nx;x++)verts.push(stagePoint(x/nx,y/ny,pose));
+ for(let y=0;y<ny;y++)for(let x=0;x<nx;x++){
+  const i=y*(nx+1)+x,sw=canvas.width/nx,sh=canvas.height/ny;
+  const a=[x*sw,y*sh],b=[(x+1)*sw,y*sh],c=[(x+1)*sw,(y+1)*sh],d=[x*sw,(y+1)*sh];
+  triangle(canvas,[a,b,c],[verts[i],verts[i+1],verts[i+nx+2]]);
+  triangle(canvas,[a,c,d],[verts[i],verts[i+nx+2],verts[i+nx+1]]);
  }
- for(let i=0;i<length;i++){
-  const t=i*.31, root=scale[Math.floor(i/8)%scale.length];
-  if(i%2===0)note(102,36,t,.25,.52);
-  note(root*(i%8===7?2:1),root,t+.02,.24,i%2?.13:.21,'triangle');
-  if(i>9&&i%2===1){
-   const top=root*[4,6,8,9][Math.floor(i/2)%4];note(top,top*.995,t,.24,.072,'triangle');
+ path(top,null,chapter===3?pink:acid,1.7);
+ const a=stagePoint(.02,0,pose),b=stagePoint(.18,0,pose);
+ line2(a[0],a[1],b[0],b[1],ink,3);
+ const floorY=1030;
+ f.save();f.globalAlpha=.35;
+ for(let i=0;i<7;i++){const y=floorY+i*i*3;line2(22,y,698,y,'#2b768c',.8)}
+ for(let i=-4;i<=4;i++)line2(360+i*65,990,360+i*205,1240,'#354456',.8);
+ f.restore();
+}
+function wordReveal(words,y,t,size,color=ink,align='center',x=360){
+ const a=ease(t/.48);
+ f.save();f.globalAlpha*=a;f.beginPath();f.rect(25,y-size-10,670,size+35);f.clip();
+ type(words,x,y+(1-a)*size*.78,size,color,850,align,-1);f.restore();
+}
+function tinyMorse(y){
+ const groups=morse.split(' ');let total=0;
+ const widths=groups.map(g=>g==='/'?6:[...g].reduce((n,c)=>n+(c==='.'?2:6),0)+(g.length-1)*2);
+ total=widths.reduce((a,b)=>a+b,0)+(groups.length-1)*5;
+ let x=(720-total)/2;
+ for(let i=0;i<groups.length;i++){
+  const g=groups[i];if(g==='/'){line2(x,y+2,x+5,y-3,pink,1);x+=11;continue}
+  for(const c of g){f.fillStyle='#8ccfc9';f.fillRect(x,y,c==='.'?2:6,2);x+=(c==='.'?2:6)+2}x+=3;
+ }
+}
+function titleLock(t,ending){
+ const enter=ease(t/.7),yy=ending?790:1045;
+ f.save();f.globalAlpha=enter;f.translate(0,(1-enter)*35);
+ type('PARADOX',360,yy,102,ink,950,'center',-4);
+ if(ending){
+  type('¿PUEDES ESCAPAR DE TI?',360,864,27,acid,650);
+  const growth=ease((t-1.1)/.6);
+  f.globalAlpha=growth;
+  f.fillStyle=acid;f.beginPath();f.roundRect(177,920,366,70,6);f.fill();
+  type('JUEGA AHORA',360,966,27,'#071116',850);
+  small('folgmateo.github.io/PARADOX/',360,1046,ink,'center',21);
+  tinyMorse(1120);
+ }else small('TU PASADO ES TU MAYOR ENEMIGO',360,1100,acid,'center',17);
+ f.restore();
+}
+function renderFrame(t){
+ t=clamp(t,0,D);
+ f.setTransform(1,0,0,1,0,0);f.globalAlpha=1;
+ const beat=t/BEAT,chapter=Math.min(6,Math.floor(beat/8)),u=t-chapter*BEAT*8;
+ const pulse=Math.exp(-(beat%1)*9),edge=Math.exp(-u*12);
+ atmosphere(t,chapter===5?.7:chapter===0?.28:.1);
+ if(chapter===0){
+  tunnel(t,360,565,.35);
+  crystal(t,360,565,1.1+.04*pulse);
+  wordReveal('TU PASADO',214,u-.1,64);
+  wordReveal('VIENE POR TI.',294,u-.38,70,acid);
+  titleLock(u-.8,false);
+ }else if(chapter===1){
+  f.save();f.globalAlpha=.75;crystal(t,360,673,1);f.restore();
+  for(let i=2;i>=1;i--){
+   const alpha=smooth((u-i*.38)/.5)*.6;
+   crystal(t-i*.7,360-i*60,673+i*31,.85,alpha,i*.1);
   }
-  if(i>24&&i%4===3)note(8400,2100,t+.12,.065,.04,'square');
+  wordReveal('CADA',230,u,42,dim);
+  wordReveal('8 SEGUNDOS',317,u-.14,76,acid);
+  wordReveal('NACE UN ECO.',1001,u-.38,53);
+  small('Tu recorrido vuelve a la vida.',360,1055,dim,'center',23);
+ }else if(chapter<5){
+  const gameTimes=[0,0,7.2,12.5,16.8];
+  if(lastChapter!==chapter){setup();lastChapter=chapter}
+  captureArena(gameTimes[chapter]+u*(chapter===4?1.4:1));
+  arenaPanel(t,chapter,u);
+  const copy=chapter===2?['LO QUE HICISTE','TE PERSIGUE.',acid]:
+   chapter===3?['TUS ECOS.','TU VENTAJA.',pink]:['UN HUECO.','UNA SALIDA.',acid];
+  wordReveal(copy[0],242,u,44,dim);
+  wordReveal(copy[1],323,u-.12,70,copy[2]);
+  small(chapter===2?'REPLAY':chapter===3?'RELAY LINK':'RUPTURE',45,422,copy[2],'left',16);
+  small('×'+Math.max(1,Math.min(5,run.combo)),675,422,copy[2],'right',20);
+  const footer=chapter===2?'ESQUIVA TU PROPIA TRAYECTORIA':chapter===3?'ACTIVA RELÉS · ENCADENA COMBOS':'CRUZA EL HUECO · SOBREVIVE';
+  small(footer,360,1125,ink,'center',19);
+ }else if(chapter===5){
+  tunnel(t,360+Math.sin(u)*40,605,1);
+  const drift=Math.sin(u*1.1)*80;
+  for(let i=3;i>=0;i--)crystal(t-i*.25,360+drift-i*26,600+i*38,.78,i? .30:1);
+  const word=u<BEAT*2?'ESQUIVA.':u<BEAT*4?'CONECTA.':u<BEAT*6?'SUPÉRATE.':'OTRA VEZ.';
+  const local=u%(BEAT*2);
+  wordReveal(word,1005,local,82,u<BEAT*4?acid:pink);
+ }else{
+  const endTime=t-BEAT*48;
+  f.save();f.globalAlpha=.25; tunnel(t*.55,360,468,.2);f.restore();
+  crystal(t*.6,360,466,1.13);
+  titleLock(endTime,true);
  }
- for(const t of [0,3.2,8.1,13.1,19]){note(175,36,t,.51,.54,'triangle');note(340,1360,t,.29,.14);}
- return {bus,stream:destination.stream};
-}
-let playingAudio=null;
-function stop(){
- active=false;cancelAnimationFrame(raf);
- if(playingAudio){playingAudio.bus.disconnect();playingAudio=null}
- $('watch').textContent='Reproducir';
-}
-function loop(now){
- const t=Math.min(D,Math.max(0,(now-started)/1000));frame(t);
- if(t<D&&active){raf=requestAnimationFrame(loop);return}
- stop();
- if(recording?.state==='recording')recording.stop();
-}
-async function start(exporting=false){
- if(recording)return;
- stop();stageIndex=-1;setup();
- if(window.AudioContext||window.webkitAudioContext){
-  const C=window.AudioContext||window.webkitAudioContext;
-  if(!soundtrack)soundtrack=new C();
-  try{await soundtrack.resume()}catch{}
+ if(chapter<6){
+  small('PARADOX',44,103,acid,'left',17);
+  const progress=Math.min(1,t/D);
+  for(let j=0;j<16;j++){f.fillStyle=j/16<progress?acid:'#302638';f.fillRect(44+j*40,1178,31,2)}
  }
- playingAudio=music();
- if(exporting){
-  let stream, pieces=[];
-  const types=['video/mp4;codecs=avc1.42001f,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm'];
-  const mime=types.find(type=>MediaRecorder.isTypeSupported(type));
+ // Restrained chromatic sweep on the musical section boundary.
+ if(edge>.04&&chapter>0){
+  f.save();f.globalAlpha=edge*.22;f.fillStyle=chapter%2?acid:pink;
+  f.fillRect(-150+720*smooth(u/.25),0,90,1280);f.restore();
+ }
+ const shade=f.createLinearGradient(0,0,0,FH);
+ shade.addColorStop(0,'#03060b65');shade.addColorStop(.13,'#03060b00');shade.addColorStop(.90,'#03060b00');shade.addColorStop(1,'#03060b90');
+ f.fillStyle=shade;f.fillRect(0,0,FW,FH);
+}
+
+function composeScore(c,destination,offset=0){
+ const sources=[];
+ const mixbus=c.createGain(),limit=c.createDynamicsCompressor();
+ mixbus.gain.value=.72;limit.threshold.value=-14;limit.knee.value=14;limit.ratio.value=5;limit.attack.value=.003;limit.release.value=.16;
+ mixbus.connect(limit).connect(destination);
+ const echo=c.createDelay(.7),feedback=c.createGain(),wet=c.createGain(),echoFilter=c.createBiquadFilter();
+ echo.delayTime.value=BEAT*.75;feedback.gain.value=.24;wet.gain.value=.16;echoFilter.type='lowpass';echoFilter.frequency.value=2800;
+ echo.connect(echoFilter).connect(feedback).connect(echo);echoFilter.connect(wet).connect(mixbus);
+ const noise=c.createBuffer(1,c.sampleRate*2,c.sampleRate);
+ let seed=71;const data=noise.getChannelData(0);
+ for(let i=0;i<data.length;i++){seed=(Math.imul(seed,1664525)+1013904223)>>>0;data[i]=(seed/4294967296)*2-1}
+ function oscillator(hz,t,duration,volume,wave='sine',end=hz,delaySend=false){
+  const o=c.createOscillator(),g=c.createGain();o.type=wave;
+  o.frequency.setValueAtTime(hz,offset+t);o.frequency.exponentialRampToValueAtTime(Math.max(10,end),offset+t+duration);
+  g.gain.setValueAtTime(.00001,offset+t);g.gain.exponentialRampToValueAtTime(volume,offset+t+.007);
+  g.gain.exponentialRampToValueAtTime(.00001,offset+t+duration);
+  o.connect(g).connect(mixbus);if(delaySend)g.connect(echo);o.start(offset+t);o.stop(offset+t+duration+.02);sources.push(o);
+ }
+ function hiss(t,duration,volume,hz,q=.6){
+  const n=c.createBufferSource(),g=c.createGain(),b=c.createBiquadFilter();n.buffer=noise;
+  b.type='highpass';b.frequency.value=hz;b.Q.value=q;n.connect(b).connect(g).connect(mixbus);
+  g.gain.setValueAtTime(.00001,offset+t);g.gain.exponentialRampToValueAtTime(volume,offset+t+.003);
+  g.gain.exponentialRampToValueAtTime(.00001,offset+t+duration);n.start(offset+t);n.stop(offset+t+duration+.01);sources.push(n);
+ }
+ function swell(t,length){
+  const n=c.createBufferSource(),b=c.createBiquadFilter(),g=c.createGain();n.buffer=noise;n.loop=true;b.type='bandpass';b.Q.value=.8;
+  b.frequency.setValueAtTime(200,offset+t);b.frequency.exponentialRampToValueAtTime(6400,offset+t+length);
+  g.gain.setValueAtTime(.00001,offset+t);g.gain.exponentialRampToValueAtTime(.12,offset+t+length-.035);g.gain.linearRampToValueAtTime(0,offset+t+length);
+  n.connect(b).connect(g).connect(mixbus);n.start(offset+t);n.stop(offset+t+length);sources.push(n);
+ }
+ const roots=[55,43.6535,65.4064,49];
+ for(let block=0;block<8;block++){
+  const t=block*8*BEAT,root=roots[block%4]*2,minor=block%4===0;
+  for(const ratio of [1,minor?1.189207:1.259921,1.498307,2]){
+   const o=c.createOscillator(),g=c.createGain(),b=c.createBiquadFilter();
+   o.type='triangle';o.frequency.value=root*ratio;b.type='lowpass';b.frequency.value=920;
+   g.gain.setValueAtTime(0,offset+t);g.gain.linearRampToValueAtTime(.028,offset+t+.25);
+   g.gain.setValueAtTime(.028,offset+t+8*BEAT-.5);g.gain.linearRampToValueAtTime(0,offset+t+8*BEAT);
+   o.connect(b).connect(g).connect(mixbus);g.connect(echo);o.start(offset+t);o.stop(offset+t+8*BEAT);sources.push(o);
+  }
+ }
+ for(let b=0;b<64;b++){
+  const t=b*BEAT,full=b>=16&&b<56,root=roots[Math.floor(b/8)%4];
+  if(b<56&&(b>=8||b%2===0)){
+   oscillator(145,t,.29,full?.67:.42,'sine',43);
+   hiss(t,.018,.035,4500);
+  }
+  if(b>=8&&b<56&&b%2===1){
+   oscillator(186,t,.125,.14,'triangle',94);hiss(t,.15,.18,1600);
+   hiss(t+.014,.095,.085,2400);
+  }
+  if(b>=8&&b<56){
+   for(let s=0;s<(full?4:2);s++)hiss(t+s*BEAT/(full?4:2),s===2?.065:.025,s===0?.028:.019,7000);
+   if(b%4===3)hiss(t+BEAT*.5,.15,.037,5800);
+  }
+  if(b>=8&&b<56){
+   oscillator(root,t+.025,BEAT*.55,.22,'triangle');
+   if(full)oscillator(root*(b%4===3?2:1),t+BEAT*.62,BEAT*.27,.12,'triangle');
+  }
+  if(b>=12){
+   const sequence=[0,7,12,15,12,7,19,14],semitone=sequence[b%8],hz=root*4*Math.pow(2,semitone/12);
+   oscillator(hz,t+BEAT*.5,.24,b<56?.045:.022,'triangle',hz,true);
+   if(full&&b%2===0)oscillator(hz/2,t+BEAT*.75,.17,.02,'sine',hz/2,true);
+  }
+  if(b%8===0){
+   oscillator(100,t,.75,.25,'sine',24);hiss(t,.65,.065,4200);
+   oscillator(880,t,.65,.035,'sine',440,true);
+  }
+ }
+ [8,16,24,32,40,48].forEach(b=>swell(b*BEAT-BEAT*2,BEAT*2));
+ mixbus.gain.setValueAtTime(.72,offset+D-.75);mixbus.gain.linearRampToValueAtTime(0,offset+D);
+ return {stop(){for(const s of sources)try{s.stop()}catch{}mixbus.disconnect();wet.disconnect();feedback.disconnect()}};
+}
+function wavBuffer(buffer){
+ const length=buffer.length,channels=buffer.numberOfChannels,bytes=new ArrayBuffer(44+length*channels*2),v=new DataView(bytes);
+ const textAt=(p,s)=>{for(let i=0;i<s.length;i++)v.setUint8(p+i,s.charCodeAt(i))};
+ textAt(0,'RIFF');v.setUint32(4,36+length*channels*2,true);textAt(8,'WAVE');textAt(12,'fmt ');
+ v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,channels,true);v.setUint32(24,buffer.sampleRate,true);
+ v.setUint32(28,buffer.sampleRate*channels*2,true);v.setUint16(32,channels*2,true);v.setUint16(34,16,true);textAt(36,'data');v.setUint32(40,length*channels*2,true);
+ const tracks=Array.from({length:channels},(_,i)=>buffer.getChannelData(i));
+ let p=44;for(let i=0;i<length;i++)for(let ch=0;ch<channels;ch++){const s=clamp(tracks[ch][i],-1,1);v.setInt16(p,s<0?s*32768:s*32767,true);p+=2}
+ return bytes;
+}
+let soundtrack=null,score=null,active=false,raf=0,started=0,recorder=null,readyMp4=false;
+const emitStatus=text=>$('status').textContent=text;
+function stopFilm(){
+ active=false;cancelAnimationFrame(raf);score?.stop();score=null;$('watch').textContent='Reproducir';
+}
+function animateFilm(){
+ const t=clamp(soundtrack.currentTime-started,0,D);renderFrame(t);
+ if(t<D&&active)raf=requestAnimationFrame(animateFilm);
+ else{stopFilm();if(recorder?.state==='recording')recorder.stop()}
+}
+async function playFilm(record=false){
+ if(recorder)return;
+ if(readyMp4&&!record){await $('finished').play();return}
+ stopFilm();setup();lastChapter=-1;
+ const A=window.AudioContext||window.webkitAudioContext;
+ if(!A){emitStatus('Descarga el MP4 para verlo con música.');return}
+ if(!soundtrack)soundtrack=new A();
+ await soundtrack.resume();
+ const bus=soundtrack.createGain();bus.connect(soundtrack.destination);
+ let media;
+ if(record)media=soundtrack.createMediaStreamDestination();
+ if(media)bus.connect(media);
+ started=soundtrack.currentTime+.12;score=composeScore(soundtrack,bus,started);
+ if(record){
+  const stream=film.captureStream(60);media.stream.getAudioTracks().forEach(x=>stream.addTrack(x));
+  const mime=['video/mp4;codecs=avc1.64001f,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm'].find(x=>MediaRecorder.isTypeSupported(x));
+  const chunks=[];
   try{
-   stream=film.captureStream(30);
-   playingAudio?.stream.getAudioTracks().forEach(track=>stream.addTrack(track));
-   recording=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:6000000}:{videoBitsPerSecond:6000000});
-   recording.ondataavailable=event=>{if(event.data.size)pieces.push(event.data)};
-   recording.onerror=()=>{pieces=[];emitStatus('El navegador no pudo grabar el video.')};
-   recording.onstop=()=>{
-    const fileMime=recording.mimeType||'video/webm';
-    const video=new Blob(pieces,{type:fileMime});
-    stream.getVideoTracks().forEach(track=>track.stop());recording=null;
-    $('export').disabled=false;$('watch').disabled=false;
-    if(!video.size){emitStatus('La grabación no se pudo completar.');return}
-    if(lastDownload)URL.revokeObjectURL(lastDownload);
-    lastDownload=URL.createObjectURL(video);
-    const suffix=fileMime.includes('mp4')?'mp4':'webm';
-    const link=document.createElement('a');link.href=lastDownload;link.download='PARADOX-trailer.'+suffix;
-    link.textContent='Descargar '+suffix.toUpperCase();$('status').replaceChildren(link);
+   recorder=new MediaRecorder(stream,{...(mime?{mimeType:mime}:{}),videoBitsPerSecond:8000000});
+   recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+   recorder.onstop=()=>{
+    const mt=recorder.mimeType||'video/webm';recorder=null;
+    stream.getTracks().forEach(track=>track.stop());$('export').disabled=false;$('watch').disabled=false;
+    const blob=new Blob(chunks,{type:mt}),a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download='PARADOX-cinematic.'+(mt.includes('mp4')?'mp4':'webm');
+    a.textContent='Guardar video';$('status').replaceChildren(a);
    };
-   recording.start();$('export').disabled=true;$('watch').disabled=true;
-   emitStatus('Grabando el tráiler. Mantén esta pestaña abierta 26 segundos.');
-  }catch{stream?.getVideoTracks().forEach(track=>track.stop());recording=null;emitStatus('Este navegador puede reproducir el tráiler. La exportación no está disponible aquí.')}
+   recorder.start();$('export').disabled=true;$('watch').disabled=true;
+   emitStatus('Grabando 30 segundos. Mantén esta pestaña abierta.');
+  }catch{recorder=null;stream.getTracks().forEach(x=>x.stop());emitStatus('Usa la descarga MP4 cuando esté lista.')}
  }
- active=true;$('watch').textContent='Reiniciar';
- started=performance.now();raf=requestAnimationFrame(loop);
+ active=true;$('watch').textContent='Reiniciar';raf=requestAnimationFrame(animateFilm);
 }
-$('watch').onclick=()=>{emitStatus('');start()};
-$('export').onclick=()=>start(true);
-if(!window.MediaRecorder||!film.captureStream){$('export').disabled=true;$('export').title='La exportación no está disponible en este navegador'}
-film.onclick=()=>{if(!active&&!recording)start()};
-film.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();if(!active&&!recording)start()}});
+$('watch').onclick=()=>playFilm().catch(()=>emitStatus('Pulsa de nuevo para reproducir.'));
+$('export').onclick=()=>{
+ if(readyMp4){const a=document.createElement('a');a.href='PARADOX-cinematic.mp4';a.download='PARADOX-cinematic.mp4';a.click()}
+ else if(window.MediaRecorder&&film.captureStream)playFilm(true).catch(()=>emitStatus('La descarga MP4 estará disponible en breve.'));
+ else emitStatus('La descarga MP4 estará disponible en breve.');
+};
+film.onclick=()=>{if(!active)playFilm()};
+film.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();if(!active)playFilm()}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&active){stopFilm();if(recorder?.state==='recording'){recorder.stop();emitStatus('Grabación interrumpida al salir de la pestaña. Vuelve a grabarla completa.')}}});
 canvas.style.width='960px';canvas.style.height='600px';
 canvas.getBoundingClientRect=()=>({width:960,height:600,left:0,top:0});
-resize();setup();frame(1.65);
+prefs.mute=true;resize();setup();renderFrame(25.5);
+window.PARADOX_TRAILER={
+ version:'cinema-v2',duration:D,fps:60,render:renderFrame,
+ reset(){stopFilm();setup();lastChapter=-1},
+ async audio(){
+  const offline=new OfflineAudioContext(2,44100*D,44100);composeScore(offline,offline.destination);
+  const buffer=await offline.startRendering(),wav=new Uint8Array(wavBuffer(buffer));
+  let s='';for(let i=0;i<wav.length;i+=32768)s+=String.fromCharCode(...wav.subarray(i,i+32768));
+  return btoa(s);
+ }
+};
+if(!new URLSearchParams(location.search).has('render')){
+ fetch('render-manifest.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(m=>{
+  if(m?.version!=='cinema-v2')return;
+  readyMp4=true;$('finished').src='PARADOX-cinematic.mp4';$('finished').hidden=false;film.hidden=true;
+  $('export').textContent='Descargar MP4';emitStatus('30 s · 9:16 · 60 fps · Sonido original');
+ }).catch(()=>{});
+}
+
 </script></body></html>
