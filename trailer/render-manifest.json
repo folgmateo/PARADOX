@@ -1,13 +1,114 @@
 {
-  "version": "cinema-v2",
+  "version": "action-v3",
   "width": 720,
   "height": 1280,
   "fps": 60,
   "duration": 30,
-  "bytes": 9311952,
+  "bytes": 7005988,
   "videoCodec": "h264",
   "audioCodec": "aac",
-  "sourceSha256": "9db08907187a2442630d4360bd60c73b31f473a7a424ef70aefd3dbd53c8eac4",
+  "sourceSha256": "db7d9f6bbb46888aaebffd98e6708685281a9533109fff995b1ec79506e54ac6",
   "browserErrors": [],
-  "createdAt": "2026-11-16T23:26:26.170Z"
+  "gameplaySnapshots": [
+    {
+      "t": 1.2,
+      "score": 542,
+      "combo": 1,
+      "hull": 3,
+      "echoes": 1,
+      "near": 1,
+      "relays": 1,
+      "tick": 953,
+      "chapter": 0
+    },
+    {
+      "t": 4.5,
+      "score": 1236,
+      "combo": 5,
+      "hull": 3,
+      "echoes": 0,
+      "near": 0,
+      "relays": 0,
+      "tick": 284,
+      "chapter": 1
+    },
+    {
+      "t": 7.4,
+      "score": 2472,
+      "combo": 5,
+      "hull": 3,
+      "echoes": 1,
+      "near": 0,
+      "relays": 0,
+      "tick": 565,
+      "chapter": 2
+    },
+    {
+      "t": 10.8,
+      "score": 524,
+      "combo": 1,
+      "hull": 3,
+      "echoes": 1,
+      "near": 0,
+      "relays": 1,
+      "tick": 939,
+      "chapter": 3
+    },
+    {
+      "t": 13.2,
+      "score": 512,
+      "combo": 1,
+      "hull": 3,
+      "echoes": 1,
+      "near": 0,
+      "relays": 1,
+      "tick": 861,
+      "chapter": 4
+    },
+    {
+      "t": 17.2,
+      "score": 6498,
+      "combo": 5,
+      "hull": 3,
+      "echoes": 2,
+      "near": 0,
+      "relays": 0,
+      "tick": 1208,
+      "chapter": 5
+    },
+    {
+      "t": 20.4,
+      "score": 4883,
+      "combo": 5,
+      "hull": 3,
+      "echoes": 1,
+      "near": 0,
+      "relays": 0,
+      "tick": 829,
+      "chapter": 6
+    },
+    {
+      "t": 24,
+      "score": 7613,
+      "combo": 3,
+      "hull": 3,
+      "echoes": 4,
+      "near": 0,
+      "relays": 0,
+      "tick": 1947,
+      "chapter": 8
+    },
+    {
+      "t": 26.7,
+      "score": 9294,
+      "combo": 2,
+      "hull": 3,
+      "echoes": 5,
+      "near": 0,
+      "relays": 0,
+      "tick": 2908,
+      "chapter": 10
+    }
+  ],
+  "createdAt": "2026-11-16T23:36:51.662Z"
 }
