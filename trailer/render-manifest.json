@@ -1,13 +1,13 @@
 {
-  "version": "action-v3",
+  "version": "action-v3.1",
   "width": 720,
   "height": 1280,
   "fps": 60,
   "duration": 30,
-  "bytes": 7005988,
+  "bytes": 6996603,
   "videoCodec": "h264",
   "audioCodec": "aac",
-  "sourceSha256": "db7d9f6bbb46888aaebffd98e6708685281a9533109fff995b1ec79506e54ac6",
+  "sourceSha256": "a72cb8d83e5f7916578df36852c5c7b2be031e789f39b7782fdd57bc15cb8bdc",
   "browserErrors": [],
   "gameplaySnapshots": [
     {
@@ -110,5 +110,5 @@
       "chapter": 10
     }
   ],
-  "createdAt": "2026-11-16T23:36:51.662Z"
+  "createdAt": "2026-11-16T23:39:47.775Z"
 }
