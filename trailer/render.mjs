@@ -31,7 +31,7 @@ try{
  console.log('Rendering original soundtrack...');
  const wav=await page.evaluate(()=>PARADOX_TRAILER.audio());
  await writeFile('/tmp/paradox-score.wav',Buffer.from(wav,'base64'));
- const sampleTimes=[2.2,5.5,9.7,13.7,20.5,25.5];
+ const sampleTimes=[1.15,4.4,7.2,13.1,16.8,28.8];
  for(let i=0;i<sampleTimes.length;i++){
   const data=await page.evaluate(t=>{PARADOX_TRAILER.render(t);return document.getElementById('film').toDataURL('image/jpeg',.95).split(',')[1]},sampleTimes[i]);
   await writeFile('/tmp/paradox-frames/'+i+'.jpg',Buffer.from(data,'base64'));
@@ -55,8 +55,14 @@ try{
  const probe=JSON.parse(execFileSync('ffprobe',['-v','error','-show_streams','-show_format','-of','json',movie],{encoding:'utf8'}));
  const video=probe.streams.find(s=>s.codec_type==='video'),audio=probe.streams.find(s=>s.codec_type==='audio');
  if(video.width!==720||video.height!==1280||video.avg_frame_rate!=='60/1'||audio.codec_name!=='aac'||Math.abs(Number(probe.format.duration)-30)>.1)throw Error('Invalid MP4');
+ const snapshots=[];
+ for(const t of [1.2,4.5,7.4,10.8,13.2,17.2,20.4,24.0,26.7]){
+  snapshots.push(await page.evaluate(t=>{PARADOX_TRAILER.render(t);return {t,...PARADOX_TRAILER.snapshot()}},t));
+ }
+ if(snapshots.some(s=>s.hull<=0))throw Error('A featured gameplay clip ended before its cut');
+ if(!snapshots.some(s=>s.combo===5)||!snapshots.some(s=>s.relays>0)||!snapshots.some(s=>s.near>0))throw Error('Missing featured gameplay event');
  const html=await readFile(resolve(out,'index.html'));
- const manifest={version:info.version,width:720,height:1280,fps:60,duration:30,bytes:(await stat(movie)).size,videoCodec:video.codec_name,audioCodec:audio.codec_name,sourceSha256:createHash('sha256').update(html).digest('hex'),browserErrors:errors,createdAt:new Date().toISOString()};
+ const manifest={version:info.version,width:720,height:1280,fps:60,duration:30,bytes:(await stat(movie)).size,videoCodec:video.codec_name,audioCodec:audio.codec_name,sourceSha256:createHash('sha256').update(html).digest('hex'),browserErrors:errors,gameplaySnapshots:snapshots,createdAt:new Date().toISOString()};
  await writeFile(resolve(out,'render-manifest.json'),JSON.stringify(manifest,null,2)+'\n');
  console.log(JSON.stringify(manifest));
 }finally{await browser.close();server.close()}
